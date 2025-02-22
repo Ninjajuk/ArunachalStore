@@ -13,6 +13,7 @@ import Fruits from './section/Fruits';
 import Vegetables from './section/Vegetables';
 import Local_Items from './section/Local_item';
 import Foods from './section/Foods';
+import CategorySlider from './CategorySlider';
 
 
 const Product = () => {
@@ -24,13 +25,17 @@ const Product = () => {
       <HeroSection />
       {/* <FeaturedCategoryPro /> */}
    
-      <PromotionBanner/>
+      {/* <PromotionBanner/> */}
        <Incentive/>
       {/* <ShopByCategory /> */}
-      <Vegetables/>
+      <CategorySlider categoryName="Vegetables" apiEndpoint="vegetables" />
+      <CategorySlider categoryName="Fruits" apiEndpoint="fruits" />
+      <CategorySlider categoryName="Local items" apiEndpoint="localitems" />
+      <CategorySlider categoryName="Food" apiEndpoint="food" />
+      {/* <Vegetables/>
       <Fruits />
       <Local_Items/>
-      <Foods/>
+      <Foods/> */}
 
       <ProducList/>
     </>
