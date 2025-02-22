@@ -2,14 +2,11 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-
 import EmptyCart from './EmptyCart';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {calculateSubtotal,} from '../../utility/cartUtils'
-
 import { deleteItemFromCartAsync, fetchItemsByUserIdAsync, selectCartLoaded, selectCartStatus, selectItems } from '../../redux/cartSliceasyn';
-import { setUserToken } from '../../redux/authSlice';
+
 import { toast } from 'react-toastify';
 
 
@@ -213,7 +210,7 @@ const subtotal = cartItems.length > 0
                             <a
                               href="/checkout"
                               // onClick={handleCheckout}
-                              className="flex items-center justify-center rounded-md border border-transparent bg-purple-700 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-purple-900"
+                              className="flex items-center justify-center rounded-md border border-transparent bg-primary px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-purple-900"
                             >
                               Checkout
                             </a>

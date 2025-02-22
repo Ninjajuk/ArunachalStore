@@ -7,116 +7,105 @@ import { useSelector } from "react-redux";
 import UserForm from "./usercomponents/UserForm";
 import AddressUserModal from "../modal/AddressUserModal";
 
-
-
-
-
 const PersonalInfoCard = () => {
+  const userLoggedin = useSelector(selectLoggedInUser);
+  const [user, setUser] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
-  const userLoggedin=useSelector(selectLoggedInUser)
-  const [user, setUser] = useState()
-  const userdata = JSON.parse(localStorage.getItem('userData'));
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-
-  const openModal = () => {
-    setIsModalOpen(!isModalOpen);
-  
+  const openModal = (address = null) => {
+    setSelectedAddress(address);
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-
+    setSelectedAddress(null);
   };
 
-
-  useEffect(()=>{
-  const fethuser=async()=>{
-    try {
-      const resp=await fetchUserProfile()
-      const data=await resp.json()
-    
-      if (data) {
-        setUser(data);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const resp = await fetchUserProfile();
+        const data = await resp.json();
+        if (data) {
+          setUser(data);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-  fethuser()
+    };
+    fetchUser();
+  }, []);
 
-  },[])
-console.log('user.use,addressesr',user)
-
-// console.log('addresses',addresses)
+  const handleDelete = (index) => {
+    const updatedAddresses = user.user.addresses.filter((_, i) => i !== index);
+    setUser({ ...user, user: { ...user.user, addresses: updatedAddresses } });
+  };
 
   return (
     <>
       <Navbar1 />
-
-      <div className=" flex flex-col items-center justify-center h-48">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-8">
         {user && (
-          <div className="p-4  w-full max-w-lg  max-h-80  bg-gray-100 rounded-md shadow-md  ">
-            <h2 className="text-2xl font-bold leading-6 pb-2">
-              <span>Name:-</span>
-              <span className="px-2"> {user.user.name}</span>
-            </h2>
-            <p className="text-gray-600 pb-1">
-              <span>Email:-</span>
-              <span className="px-2">{user.user.email}</span>
-            </p>
-            <p className="text-gray-600 pb-1">
-              <span>Phone:-</span>
-              <span className="px-2">{user.user.phone}</span>
-            </p>
-            {user.user.role === "admin" && (
-              <h3 className="text-xl my-1 font-bold tracking-tight text-red-900">
-                role :{user.user.role}
-              </h3>
-            )}
-            <div className="mt-4 flex items-center justify-center ">
-              {user.user.addresses.length > 0 ? (
-                // <button
-                //   className=" bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
-                //   onClick={openModal}
-                // >
-                //   Update
-                // </button>
-                null
-              ) : (
-                <button
-                  className=" bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
-                  onClick={openModal}
-                >
-                  Add Delivery Address
-                </button>
+          <div className="p-8 w-full max-w-2xl bg-white rounded-xl shadow-lg border border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-800 pb-4">Personal Information</h2>
+            <div className="space-y-4">
+              <p className="text-gray-700"><span className="font-semibold">Name:</span> {user.user.name}</p>
+              <p className="text-gray-700"><span className="font-semibold">Email:</span> {user.user.email}</p>
+              <p className="text-gray-700"><span className="font-semibold">Phone:</span> {user.user.phone}</p>
+              {user.user.role === "admin" && (
+                <p className="text-xl font-bold text-red-900"><span className="font-semibold">Role:</span> {user.user.role}</p>
               )}
+            </div>
+            <div className="mt-6 flex justify-center">
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300"
+                onClick={() => openModal()}
+              >
+                Add Delivery Address
+              </button>
             </div>
           </div>
         )}
 
-        {isModalOpen && (
-          <AddressUserModal closeModal={closeModal} user={user} />
+        {isModalOpen && <AddressUserModal closeModal={closeModal} user={user} address={selectedAddress} />}
+
+        {user && (
+          <div className="flex flex-col items-center mt-8 w-full max-w-2xl">
+            <div className="p-8 w-full bg-white rounded-xl shadow-lg border border-gray-200">
+              <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Delivery Addresses</h1>
+              {user.user.addresses.map((item, index) => (
+                <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-sm mb-4">
+                  <div className="space-y-2">
+                    <p><span className="font-semibold">Name:</span> {item.name}</p>
+                    <p><span className="font-semibold">Email:</span> {item.email}</p>
+                    <p><span className="font-semibold">Phone:</span> {item.phone}</p>
+                    <p><span className="font-semibold">Street:</span> {item.street}</p>
+                    <p><span className="font-semibold">Pin Code:</span> {item.pinCode}</p>
+                    <p><span className="font-semibold">City:</span> {item.city}</p>
+                    <p><span className="font-semibold">State:</span> {item.state}</p>
+                  </div>
+                  <div className="flex justify-end space-x-4 mt-4">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                      onClick={() => openModal(item)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                      onClick={() => handleDelete(index)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
-      {user && (
-        <div className="flex items-center justify-center">
-          <div className="p-4  w-full max-w-lg  max-h-80  bg-purple-100 rounded-md shadow-md  ">
-            <h1 className="text-center font-bold text-lg"> Delivery Address</h1>
-            {user.user.addresses.map((item)=>(
-            <>
-            <p className="flex justify-between"><span>Name:-</span><span>{item.name}</span></p>
-            <p className="flex justify-between"><span>email:-</span><span>{item.email}</span></p>
-            <p className="flex justify-between"><span>phone:-</span><span>{item.phone}</span></p>
-            <p className="flex justify-between"><span>street:-</span><span>{item.street}</span></p>
-            <p className="flex justify-between"><span>pinCode:-</span><span>{item.pinCode}</span></p>
-            <p className="flex justify-between"><span>city:-</span><span>{item.city}</span></p>
-            <p className="flex justify-between"><span>state:-</span><span>{item.state}</span></p>
-
-            </>
-          ))}
-          </div>
-        </div>
-      )}
     </>
   );
 };
