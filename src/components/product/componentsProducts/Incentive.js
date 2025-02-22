@@ -39,7 +39,7 @@ export default function Incentive() {
               key={index}
               className="flex flex-col items-center text-center bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-2 transition-transform"
             >
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-blue-500 mb-6">
+              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary mb-6">
                 {incentive.icon}
               </div>
               <h3 className="mt-4 text-2xl font-bold text-gray-900">{incentive.name}</h3>

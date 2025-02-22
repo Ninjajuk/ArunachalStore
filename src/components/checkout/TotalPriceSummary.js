@@ -53,7 +53,7 @@ const navigate=useNavigate()
         {/* <span>₹1100</span> */}
         <span>₹{total()}</span>
       </div>
-      <div className="w-full bg-purple-700 text-center my-2 rounded-lg text-white font-semibold">
+      <div className="w-full bg-primary text-center my-2 rounded-lg text-white font-semibold">
         {!isLoading ? (
           <button onClick={handleSubmit} className="px-2 py-2">
             Place Order

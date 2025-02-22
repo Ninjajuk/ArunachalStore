@@ -55,7 +55,7 @@ const CategorySlider = ({ categoryName, apiEndpoint }) => {
     <section className="w-full">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 pb-4">
         <div className="flex justify-between">
-          <h1 className="text-xl lg:text-2xl px-2 font-bold py-4 text-purple-800">
+          <h1 className="text-xl lg:text-2xl px-2 font-bold py-4 text-primary">
             {categoryName}
           </h1>
 
@@ -64,7 +64,7 @@ const CategorySlider = ({ categoryName, apiEndpoint }) => {
               disabled={currentIndex === 0}
               onClick={handlePrev}
               className={`hover:rounded-full ${
-                currentIndex === 0 ? "opacity-25 pointer-events-none" : "opacity-1 hover:bg-gray-400 cursor-pointer"
+                currentIndex === 0 ? "opacity-25 pointer-events-none" : "opacity-1 hover:bg-primary cursor-pointer"
               }`}
             >
               <FaAngleLeft className="w-6 h-6" />
@@ -73,7 +73,7 @@ const CategorySlider = ({ categoryName, apiEndpoint }) => {
               onClick={handleNext}
               disabled={currentIndex + itemsPerPage >= data.length}
               className={`cursor-pointer hover:rounded-full ${
-                currentIndex + itemsPerPage >= data.length ? "opacity-25 pointer-events-none" : "opacity-1 hover:bg-gray-400 cursor-pointer"
+                currentIndex + itemsPerPage >= data.length ? "opacity-25 pointer-events-none" : "opacity-1 hover:bg-primary cursor-pointer"
               }`}
             >
               <FaAngleRight className="w-6 h-6" />

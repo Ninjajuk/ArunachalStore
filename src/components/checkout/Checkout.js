@@ -17,6 +17,7 @@ import { selectLoggedInUser } from '../../redux/authSlice';
 import { createOrder, creteOrder } from '../../API/orderAPI';
 import { createOrderAsync, selectOrders, selectStatus } from '../../redux/orderSlice';
 import { validateForm, validateFormData } from '../../utility/validationAuth';
+import EmptyCartCheckout from '../cart/EmptyCartCheckout';
 
 
 
@@ -56,6 +57,7 @@ const intialstateForm={
 const [formData, setFormData] = useState(intialstateForm);
 
 const [error, setError] = useState(intialstateForm);
+
 const handleQuantityDecrease = (item) => {
   console.log(item.quantity)
   if (item.quantity > 1) {
@@ -81,11 +83,11 @@ const removeFromCart =async(cartItemId) => {
   notifyRemove();
 };
 
-// useEffect(() => {
-//   if (!cartLoaded) {
-//     dispatch(fetchItemsByUserIdAsync());
-//   }
-// }, [dispatch, cartLoaded,]);
+useEffect(() => {
+  if (!cartLoaded) {
+    dispatch(fetchItemsByUserIdAsync());
+  }
+}, [dispatch, cartLoaded,]);
 
 
 
@@ -147,7 +149,6 @@ const removeFromCart =async(cartItemId) => {
       <Navbar1 />
       {loadingspinner ? (
         <div className="flex items-center justify-center h-screen">
-          {" "}
           <Circles
             height="80"
             width="80"
@@ -186,7 +187,7 @@ const removeFromCart =async(cartItemId) => {
                           className="mt-1 p-2 w-full border rounded-md"
                           required
                         />
-                                 {error.firstName && <p className="text-red-500">{error.firstName}</p>}
+                        {error.firstName && <p className="text-red-500">{error.firstName}</p>}
                       </div>
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-600">
@@ -203,20 +204,6 @@ const removeFromCart =async(cartItemId) => {
                         {error.lastName && <p className="text-red-500">{error.lastName}</p>}
                       </div>
                     </div>
-
-                    {/* <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-600">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded-md"
-                        required
-                      />
-                    </div> */}
 
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-600">
@@ -261,84 +248,7 @@ const removeFromCart =async(cartItemId) => {
                       />
                         {error.landmark && <p className="text-red-500">{error.landmark}</p>}
                     </div>
-
-                    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-600">
-                          City
-                        </label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          className="mt-1 p-2 w-full border rounded-md"
-                          required
-                        />
-                         {error.city && <p className="text-red-500">{error.city}</p>}
-                      </div>
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-600">
-                          District
-                        </label>
-                        <input
-                          type="text"
-                          name="district"
-                          value={formData.district}
-                          onChange={handleChange}
-                          className="mt-1 p-2 w-full border rounded-md"
-                          required
-                        />
-                          {error.district && <p className="text-red-500">{error.district}</p>}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-600">
-                          State
-                        </label>
-                        <input
-                          type="text"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleChange}
-                          className="mt-1 p-2 w-full border rounded-md"
-                          required
-                        />
-                        {error.state && <p className="text-red-500">{error.state}</p>}
-                      </div>
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-600">
-                          Pincode
-                        </label>
-                        <input
-                          type="text"
-                          name="pincode"
-                          value={formData.pincode}
-                          onChange={handleChange}
-                          className="mt-1 p-2 w-full border rounded-md"
-                          required
-                        />
-                         {error.pincode && <p className="text-red-500">{error.pincode}</p>}
-                      </div>
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-600">
-                          Country
-                        </label>
-                        <input
-                          type="text"
-                          name="country"
-                          value={formData.country}
-                          onChange={handleChange}
-                          className="mt-1 p-2 w-full border rounded-md"
-                          required
-                        />
-                        {error.country && <p className="text-red-500">{error.country}</p>}
-                      </div>
-                    </div> */}
                   </form>
-
                   <div className="mt-10 space-y-10">
                 <fieldset>
                   <legend className="text-sm font-semibold leading-6 text-gray-600">
@@ -365,12 +275,12 @@ const removeFromCart =async(cartItemId) => {
                         Cash
                       </label>
                     </div>
-                    {/* <div className="flex items-center gap-x-3">
+                    <div className="flex items-center gap-x-3">
                       <input
                         id="card"
-                        onChange={handlePayment}
+                        // onChange={handlePayment}
                         name="payments"
-                        checked={paymentMethod === 'card'}
+                        // checked={paymentMethod === 'card'}
                         value="card"
                         type="radio"
                         className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -381,7 +291,7 @@ const removeFromCart =async(cartItemId) => {
                       >
                         Card Payment
                       </label>
-                    </div> */}
+                    </div>
                   </div>
                 </fieldset>
               </div>
@@ -434,7 +344,7 @@ const removeFromCart =async(cartItemId) => {
                                   </button>
                                   <input
                                     type="text"
-                                    className="w-10 font-bold text-center text-purple-800"
+                                    className="w-10 font-bold text-center text-primary"
                                     value={item.quantity} // Display the item quantity
                                     readOnly
                                   />
@@ -485,21 +395,7 @@ const removeFromCart =async(cartItemId) => {
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-screen">
-              <p className="text-xl text-gray-600">
-                Your cart is Empty Please add items to your cart.
-              </p>
-              <div className="my-2">
-                <button
-                  type="button"
-                  onClick={() => navigate("/")}
-                  className="font-bold text-red-800 hover:text-red-800 px-2 "
-                >
-                  Continue Shopping
-                  <span aria-hidden="true"> &rarr;</span>
-                </button>
-              </div>
-            </div>
+             <EmptyCartCheckout/>   
           )}
         </div>
       )}
