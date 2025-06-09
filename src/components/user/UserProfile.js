@@ -18,12 +18,7 @@ const PersonalInfoCard = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedAddress(null);
-  };
 
-  useEffect(() => {
     const fetchUser = async () => {
       try {
         const resp = await fetchUserProfile();
@@ -35,8 +30,16 @@ const PersonalInfoCard = () => {
         console.error(error);
       }
     };
+    
+  useEffect(() => {
     fetchUser();
   }, []);
+
+    const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedAddress(null);
+    fetchUser();
+  };
 
   const handleDelete = (index) => {
     const updatedAddresses = user.user.addresses.filter((_, i) => i !== index);
@@ -75,7 +78,7 @@ const PersonalInfoCard = () => {
           <div className="flex flex-col items-center mt-8 w-full max-w-2xl">
             <div className="p-8 w-full bg-white rounded-xl shadow-lg border border-gray-200">
               <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Delivery Addresses</h1>
-              {user.user.addresses.map((item, index) => (
+              {user.user.addresses.slice().reverse().map((item, index) => (
                 <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-sm mb-4">
                   <div className="space-y-2">
                     <p><span className="font-semibold">Name:</span> {item.name}</p>
