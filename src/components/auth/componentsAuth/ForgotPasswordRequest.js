@@ -1,23 +1,14 @@
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-
-
 import { resetPasswordRequest } from '../../../API/authAPI';
 
 export default function ForgotPasswordRequest() {
-  const [error,setError] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mailsent, setmailsent] = useState(false);
+  const [mailsent, setMailsent] = useState(false);
 
-  const navigate = useNavigate()
-
-
-
-
-
-
-
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,131 +19,108 @@ export default function ForgotPasswordRequest() {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      console.log(data)
-      const response=await resetPasswordRequest(data)
-      
-      if(!response){
-        setError(error.message);
-      }else{
-        setmailsent(true)
+      const response = await resetPasswordRequest(data);
+
+      if (!response) {
+        setError('Failed to send reset password email. Please try again.');
+      } else {
+        setMailsent(true);
       }
-    // //  const timeoutId = setTimeout(() => {
-    // //   navigate('/reset-password');
-    // // }, 2000);
-
-    // // // Cleanup function to clear the timeout when the component unmounts
-    // // return () => clearTimeout(timeoutId);
-    //   }
-
-
     } catch (error) {
-      setError(error.message);
-   
- 
-    }
-     finally {
+      setError(error.message || 'An error occurred. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+    <div className="bg-gradient-to-r from-purple-50 to-indigo-50 flex justify-center items-center min-h-screen">
+      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-3xl">
+        <div className="text-center">
           {mailsent ? (
             <>
-              <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-purple-700">
-                Email Send Successfully
+              <h1 className="text-3xl font-bold text-purple-700 mb-4">
+                Email Sent Successfully
               </h1>
-              <p className="mt-10 text-center text-sm text-gray-500">
-                Please Check Your Mail for Verification.
+              <p className="text-gray-600">
+                Please check your email for further instructions to reset your password.
               </p>
             </>
           ) : (
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-purple-700">
-              Enter email to reset password
-            </h2>
+            <>
+              <h2 className="text-3xl font-bold text-purple-700 mb-4">
+                Reset Your Password
+              </h2>
+              <p className="text-gray-600">
+                Enter your email address to receive a password reset link.
+              </p>
+            </>
           )}
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            noValidate
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6"
-          >
-            {mailsent ? null : (
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    {...register("email", {
-                      required: "email is required",
-                      pattern: {
-                        value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
-                        message: "email not valid",
-                      },
-                    })}
-                    type="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                  {error && (
-                    <p className="text-red-500">{error || error.message}</p>
-                  )}
-                  {/* {mailsent && <p className="text-green-500">Mail Sent</p>} */}
-                </div>
-              </div>
-            )}
+        {!mailsent && (
+          <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
+                    message: "Invalid email address",
+                  },
+                })}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                placeholder="Enter your email"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              )}
+              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            </div>
 
             <div>
-              {loading ? (
-                <button
-                  className="flex w-full justify-center rounded-md bg-purple-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  disabled
-                >
-                  Loading...
-                </button>
-              ) : (
-                !mailsent && (
-                  <button
-                    type="submit"
-                    onClick={handleSubmit}
-                    className="flex w-full justify-center rounded-md bg-purple-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Send Email
-                  </button>
-                )
-              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-purple-700 text-white py-3 rounded-lg font-semibold hover:bg-purple-800 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+              >
+                {loading ? "Sending..." : "Send Reset Link"}
+              </button>
             </div>
           </form>
+        )}
 
-          {mailsent ? //   Please Check Your Mail for Verification. // <p className="mt-10 text-center text-sm text-gray-500">
-          //   <Link
-          //     to="/login"
-          //     className="font-semibold leading-6 text-purple-600 hover:text-purple-500"
-          //   >
-          //     Resend
-          //   </Link>
-          // </p>
-          null : (
-            <p className="mt-10 text-center text-sm text-gray-500">
-              Send me back to{" "}
+        {mailsent ? (
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Didn't receive the email?{" "}
+              <button
+                onClick={handleSubmit(onSubmit)}
+                className="text-purple-700 hover:text-purple-900 font-medium transition-all"
+              >
+                Resend
+              </button>
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Remember your password?{" "}
               <Link
                 to="/login"
-                className="font-semibold leading-6 text-purple-600 hover:text-purple-500"
+                className="text-purple-700 hover:text-purple-900 font-medium transition-all"
               >
                 Login
               </Link>
             </p>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }

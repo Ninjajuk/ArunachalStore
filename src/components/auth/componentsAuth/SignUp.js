@@ -1,172 +1,170 @@
-import React, { useState,useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form"
-import {createUserAsync,selectError,setLoading,selectsuccessFlag} from '../../../redux/authSlice'
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { createUserAsync, selectError, setLoading, selectsuccessFlag } from "../../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
-import UserCreatedSuccessfully from "../../modal/UserCreatedAuccessful";
 import { useDispatch, useSelector } from "react-redux";
-import UserCreatedSuccessfullyPage from "./EmailSuccessUserCreated";
 import { toast } from "react-toastify";
-
+import UserCreatedSuccessfullyPage from "./EmailSuccessUserCreated";
 
 const RegistrationForm = () => {
   const loading = useSelector(setLoading);
   const error = useSelector(selectError);
- const successuser = useSelector(selectsuccessFlag);
- const user = useSelector((state) => state.auth.user);
+  const successuser = useSelector(selectsuccessFlag);
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
+
   const notifyAdd = () => toast.success("User Created Successfully!");
+
   const {
     register,
     handleSubmit,
-    reset, // Destructure reset from useForm
+    reset,
     formState: { errors },
   } = useForm();
 
   const onSubmit = async (data) => {
-    // console.log(data)
     try {
       await dispatch(createUserAsync(data));
-      notifyAdd()
-      // Reset the form upon successful user creation
-      reset();
+      notifyAdd();
+      reset(); // Reset the form upon successful user creation
     } catch (error) {
-            // Handle any Signup errors if needed
-            console.error('Signup error:', error);
+      console.error("Signup error:", error);
     }
-
   };
 
-
   useEffect(() => {
-    // Check if the user is already authenticated (data available in localStorage)
     if (user) {
-      // Redirect to a different page, e.g., the home page
-      navigate('/signup/usercreatedsuccessfully');
+      navigate("/signup/usercreatedsuccessfully");
     }
   }, [user, navigate]);
+
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-full lg:w-1/2 flex flex-col lg:flex-row rounded-md shadow-md p-4">
-          <div className=" lg:block lg:w-1/2">
-            <img
-              src="https://images.unsplash.com/photo-1496917756835-20cb06e75b4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
-              alt="Your Image"
-              className="w-full h-full object-cover"
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 flex justify-center items-center min-h-screen">
+        <form
+          className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-3xl"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <h2 className="text-3xl font-bold mb-8 text-purple-700 text-center">
+            Join YingKing Store
+          </h2>
+
+          {/* Name Field */}
+          <div className="mb-6">
+            <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              {...register("name", {
+                required: "Name is required",
+              })}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              placeholder="Enter your name"
             />
-{/* <svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 24 24"
-  fill="currentColor"
-  className="w-full h-full object-cover"
->
-  <path d="M15 14h-4v-2h4v2zm0-4h-4V8h4v2zm5-4H4v14h16V6l-1-1zm-7 10H7v-1.5l3 2 3-2V16zM20 6v12H5V4h11v2h4l1 1z" />
-</svg> */}
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            )}
           </div>
-          <form
-            className="bg-white p-6  w-full lg:w-1/2"
-            noValidate
-            onSubmit={handleSubmit(onSubmit)}
+
+          {/* Email Field */}
+          <div className="mb-6">
+            <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
+                  message: "Invalid email address",
+                },
+              })}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              placeholder="Enter your email"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Phone Field */}
+          <div className="mb-6">
+            <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">
+              Phone
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              {...register("phone", {
+                required: "Phone is required",
+                pattern: {
+                  value: /^[0-9]{10,}$/,
+                  message: "Phone number must be at least 10 digits",
+                },
+              })}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              placeholder="Enter your phone number"
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+            )}
+          </div>
+
+          {/* Password Field */}
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              {...register("password", {
+                required: "Password is required",
+              })}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              placeholder="Enter your password"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-purple-700 text-white py-3 rounded-lg font-semibold hover:bg-purple-800 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           >
-            <h2 className="text-2xl font-bold mb-6 text-purple-700">
-              Register to YingKing Store
-            </h2>
-            <div className="mb-4">
-              {/* <label htmlFor="name" className="block text-gray-600">Name</label> */}
-              <input
-                type="text"
-                id="name"
-                name="name"
-                {...register("name", {
-                  required: "Name is required",
-                })}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
-                placeholder="Enter your name"
-              />
-              {errors.name && (
-                <p className="text-red-500">{errors.name.message}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              {/* <label htmlFor="email" className="block text-gray-600">Email</label> */}
-              <input
-                type="email"
-                id="email"
-                name="email"
-                {...register("email", {
-                  required: "email is required",
-                  pattern: {
-                    value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
-                    message: "email not valid",
-                  },
-                })}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
-              )}
-            </div>
+            {loading ? "Registering..." : "Register"}
+          </button>
 
-            <div className="mb-4">
-              {/* <label htmlFor="phone" className="block text-gray-600">Phone</label> */}
-              <input
-                type="phone"
-                id="phone"
-                name="phone"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
-                placeholder="Enter your Phone"
-                {...register("phone", {
-                  required: "Phone is required",
-                  pattern: {
-                    value: /^[0-9]{10,}$/,
-                    message: "Phone number must be at least 10 digits",
-                  },
-                })}
-              />
-              {errors.phone && (
-                <p className="text-red-500">{errors.phone.message}</p>
-              )}
-            </div>
+          {/* Error Message */}
+          {error && (
+            <p className="text-red-500 text-sm mt-4 text-center">{error}</p>
+          )}
 
-            <div className="mb-4">
-              {/* <label htmlFor="password" className="block text-gray-600">Password</label> */}
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-400"
-                placeholder="Enter your password"
-                {...register("password", {
-                  required: "password is required",
-                })}
-              />
-              {errors.password && (
-                <p className="text-red-500">{errors.password.message}</p>
-              )}
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-purple-600 text-white rounded-lg py-2 hover:bg-purple-700 transition duration-300"
-            >
-              {/* Register */}
-              {loading ? "Loading..." : "Register"}
-            </button>
-            <div className="flex justify-between mt-4">
-              <p>Already have an account</p>
+          {/* Login Link */}
+          <div className="mt-6 text-center">
+            <p className="text-gray-700">
+              Already have an account?{" "}
               <button
                 onClick={() => navigate("/login")}
-                className="text-sky-700 underline"
+                className="text-purple-700 hover:text-purple-900 font-medium transition-all"
               >
                 Login
               </button>
-            </div>
-            {error && <p className="text-red-500">{error}</p>}
-          </form>
-        </div>
+            </p>
+          </div>
+        </form>
       </div>
-      {user && <UserCreatedSuccessfullyPage/>}
+
+      {/* Show Success Page if User is Created */}
+      {user && <UserCreatedSuccessfullyPage />}
     </>
   );
 };

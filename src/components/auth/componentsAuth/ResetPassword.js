@@ -1,182 +1,144 @@
-
-
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import {useDispatch, useSelector} from 'react-redux';
 import { useState } from 'react';
-// import { resetPasswordAsync, selectError, selectPasswordReset } from '../authSlice';
 import { resetPassword } from '../../../API/authAPI';
 import EmailFailedResetPasswrod from './EmailFailedveri';
 import { toast } from 'react-toastify';
 
-
 export default function ResetPassword() {
-  const [error,setError] = useState('');
-//   const passwordReset = useSelector(selectPasswordReset);
-//   const error = useSelector(selectError)
-
-const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
   const query = new URLSearchParams(window.location.search);
-  const token = query.get('token')
-  const email = query.get('email')
-  const [btnLoadin,setBtnLoading]=useState(false)
+  const token = query.get('token');
+  const email = query.get('email');
+  const [btnLoading, setBtnLoading] = useState(false);
 
-  const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // console.log(errors);
-  // console.log(email, token)
-  const notifyAdd = () => toast.success("Password Reset Successfully!");
+  const notifyAdd = () => toast.success('Password Reset Successfully!');
+
   const onSubmit = async (data) => {
-    setBtnLoading(true)
+    setBtnLoading(true);
     try {
       const requestData = {
         email: email,
         password: data.password,
-        token: token
+        token: token,
       };
 
       const response = await resetPassword(requestData);
-      
+
       if (response) {
-        console.log(response); // Success message in the console
-        notifyAdd()
-      
-        navigate('/login');  // Redirect to login page
+        notifyAdd();
+        navigate('/login'); // Redirect to login page
       } else {
-        setError("Failed to reset password. Please try again.");
+        setError('Failed to reset password. Please try again.');
       }
     } catch (error) {
-      setError("An error occurred while resetting the password.");
+      setError('An error occurred while resetting the password.');
+    } finally {
+      setBtnLoading(false);
     }
   };
 
   return (
     <>
       {email && token ? (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            {/* <img
-          className="mx-auto h-10 w-auto"
-          src="/ecommerce.png"
-          alt="Your Company"
-        /> */}
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Enter New Password
-            </h2>
-          </div>
+        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 flex justify-center items-center min-h-screen">
+          <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-3xl">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-purple-700 mb-4">
+                Reset Your Password
+              </h2>
+              <p className="text-gray-600">
+                Enter a new password for your account.
+              </p>
+            </div>
 
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form
-              noValidate
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-6"
-            >
+            <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              {/* New Password Field */}
               <div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    New Password
-                  </label>
-                </div>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    // {...register('password', {
-                    //   required: 'password is required',
-                    //   pattern: {
-                    //     value:
-                    //       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
-                    //     message: `- at least 8 characters\n
-                    //     - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number\n
-                    //     - Can contain special characters`,
-                    //   },
-                    // })}
-                    {...register("password", {
-                      required: "password is required",
-                    })}
-                    type="password"
-                    autoComplete="new-password"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.password && (
-                    <p className="text-red-500">{errors.password.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Confirm Password
-                  </label>
-                </div>
-                <div className="mt-2">
-                  <input
-                    id="confirmPassword"
-                    {...register("confirmPassword", {
-                      required: "confirm password is required",
-                      validate: (value, formValues) =>
-                        value === formValues.password ||
-                        "password not matching",
-                    })}
-                    type="password"
-                    autoComplete="new-password"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-red-500">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
-                  {/* {passwordReset && (
-                <p className="text-green-500">Password Reset</p>
-              )} */}
-                  {error && <p className="text-red-500">{error}</p>}
-                </div>
-              </div>
-              <div>
-                {btnLoadin ? (
-                  <button
-                    type="submit"
-                    className="flex w-full justify-center rounded-md bg-purple-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
-                  >
-                    Loading...
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className="flex w-full justify-center rounded-md bg-purple-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
-                  >
-                    Reset Password
-                  </button>
+                <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+                  New Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  {...register('password', {
+                    required: 'Password is required',
+                    pattern: {
+                      value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
+                      message:
+                        'Password must be at least 8 characters, contain 1 uppercase letter, 1 lowercase letter, and 1 number.',
+                    },
+                  })}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  placeholder="Enter new password"
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
                 )}
+              </div>
+
+              {/* Confirm Password Field */}
+              <div>
+                <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  {...register('confirmPassword', {
+                    required: 'Confirm password is required',
+                    validate: (value, formValues) =>
+                      value === formValues.password || 'Passwords do not match',
+                  })}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  placeholder="Confirm new password"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Error Message */}
+              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+              {/* Submit Button */}
+              <div>
+                <button
+                  type="submit"
+                  disabled={btnLoading}
+                  className="w-full bg-purple-700 text-white py-3 rounded-lg font-semibold hover:bg-purple-800 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                >
+                  {btnLoading ? 'Resetting...' : 'Reset Password'}
+                </button>
               </div>
             </form>
 
-            <p className="mt-10 text-center text-sm text-gray-500">
-              Send me back to{" "}
-              <Link
-                to="/login"
-                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-              >
-                Login
-              </Link>
-            </p>
+            {/* Back to Login Link */}
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Remember your password?{' '}
+                <Link
+                  to="/login"
+                  className="text-purple-700 hover:text-purple-900 font-medium transition-all"
+                >
+                  Login
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
-    ) : (
-         <EmailFailedResetPasswrod />
-       )}
+      ) : (
+        <EmailFailedResetPasswrod />
+      )}
     </>
   );
 }
